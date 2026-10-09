@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network Security Config
+  Allows cleartext (HTTP) traffic to localhost and the Android emulator host.
+  For ngrok (https), no special config is needed — it's already HTTPS.
+  IMPORTANT: Remove the domain-config entries before publishing to Play Store.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+
+    <!-- Allow HTTP for local development (emulator → host) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <!-- Add your local network IP here if testing on a real device over LAN -->
+        <!-- <domain includeSubdomains="false">192.168.1.X</domain> -->
+    </domain-config>
+</network-security-config>

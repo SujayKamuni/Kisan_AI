@@ -1,0 +1,35 @@
+com.kisanai.app-core-ktx-1.9.0-0 C:\Users\user\.gradle\caches\9.0.0\transforms\0361a694f1307923f91f28e324d1b4a4\transformed\core-ktx-1.9.0\res
+com.kisanai.app-lifecycle-livedata-core-2.6.1-1 C:\Users\user\.gradle\caches\9.0.0\transforms\1693a86d9d60f7f464459d7ce92873f6\transformed\lifecycle-livedata-core-2.6.1\res
+com.kisanai.app-viewpager2-1.0.0-2 C:\Users\user\.gradle\caches\9.0.0\transforms\16dd5bfd433442fc0bb12cdd0e40271c\transformed\viewpager2-1.0.0\res
+com.kisanai.app-coordinatorlayout-1.1.0-3 C:\Users\user\.gradle\caches\9.0.0\transforms\1aa9eb19a5eccf9ba496768ed200227b\transformed\coordinatorlayout-1.1.0\res
+com.kisanai.app-profileinstaller-1.3.0-4 C:\Users\user\.gradle\caches\9.0.0\transforms\1bce362e591d528e8fcae6611397d85a\transformed\profileinstaller-1.3.0\res
+com.kisanai.app-annotation-experimental-1.3.0-5 C:\Users\user\.gradle\caches\9.0.0\transforms\41edd1e8c67f6292fb749aa2c307a958\transformed\annotation-experimental-1.3.0\res
+com.kisanai.app-drawerlayout-1.1.1-6 C:\Users\user\.gradle\caches\9.0.0\transforms\42615e42014da8647437dfc1477fdecb\transformed\drawerlayout-1.1.1\res
+com.kisanai.app-lifecycle-runtime-2.6.1-7 C:\Users\user\.gradle\caches\9.0.0\transforms\46982320fbdcebf952e9ad6a982573ad\transformed\lifecycle-runtime-2.6.1\res
+com.kisanai.app-lifecycle-viewmodel-2.6.1-8 C:\Users\user\.gradle\caches\9.0.0\transforms\4b3fb2dce5f15dabd0a21c4a6b01f212\transformed\lifecycle-viewmodel-2.6.1\res
+com.kisanai.app-constraintlayout-2.1.4-9 C:\Users\user\.gradle\caches\9.0.0\transforms\4c5f07dd9cf403aa0ddebcb445803edb\transformed\constraintlayout-2.1.4\res
+com.kisanai.app-appcompat-1.6.1-10 C:\Users\user\.gradle\caches\9.0.0\transforms\56088aaea044f3ce81ca653bd7dc471a\transformed\appcompat-1.6.1\res
+com.kisanai.app-cardview-1.0.0-11 C:\Users\user\.gradle\caches\9.0.0\transforms\7b296a60c5ee5507322fcf7267cecd33\transformed\cardview-1.0.0\res
+com.kisanai.app-core-1.9.0-12 C:\Users\user\.gradle\caches\9.0.0\transforms\7baac5b79cf9f13738bcd8597ae7915c\transformed\core-1.9.0\res
+com.kisanai.app-core-runtime-2.2.0-13 C:\Users\user\.gradle\caches\9.0.0\transforms\7f5ae80ea433a5bde008ab9ee585b875\transformed\core-runtime-2.2.0\res
+com.kisanai.app-lifecycle-process-2.6.1-14 C:\Users\user\.gradle\caches\9.0.0\transforms\81d23344adfca1e9a5e6b11223c735ec\transformed\lifecycle-process-2.6.1\res
+com.kisanai.app-material-1.11.0-15 C:\Users\user\.gradle\caches\9.0.0\transforms\89cc1ec7a56a093dd95f6ecdf268a0fa\transformed\material-1.11.0\res
+com.kisanai.app-lifecycle-livedata-2.6.1-16 C:\Users\user\.gradle\caches\9.0.0\transforms\8a281418c0034dbd73564d44c492354a\transformed\lifecycle-livedata-2.6.1\res
+com.kisanai.app-transition-1.2.0-17 C:\Users\user\.gradle\caches\9.0.0\transforms\94a15b0dab4fc83ca34e2505c752c259\transformed\transition-1.2.0\res
+com.kisanai.app-fragment-1.3.6-18 C:\Users\user\.gradle\caches\9.0.0\transforms\a2225eca7cb3ec0cbf56994ca673b65b\transformed\fragment-1.3.6\res
+com.kisanai.app-recyclerview-1.1.0-19 C:\Users\user\.gradle\caches\9.0.0\transforms\a2b108b98c8ca8fd8b2fd476c15cddb8\transformed\recyclerview-1.1.0\res
+com.kisanai.app-startup-runtime-1.1.1-20 C:\Users\user\.gradle\caches\9.0.0\transforms\b5c361a2b9661eabea513b20e444071f\transformed\startup-runtime-1.1.1\res
+com.kisanai.app-emoji2-views-helper-1.2.0-21 C:\Users\user\.gradle\caches\9.0.0\transforms\bb3b2b6f5ffb5dc9115afee90a9a7740\transformed\emoji2-views-helper-1.2.0\res
+com.kisanai.app-savedstate-1.2.1-22 C:\Users\user\.gradle\caches\9.0.0\transforms\c919418f67819fcb661b66b139f029d5\transformed\savedstate-1.2.1\res
+com.kisanai.app-emoji2-1.2.0-23 C:\Users\user\.gradle\caches\9.0.0\transforms\cfb22b071274569d22ad8b2ef7bcee6f\transformed\emoji2-1.2.0\res
+com.kisanai.app-lifecycle-viewmodel-savedstate-2.6.1-24 C:\Users\user\.gradle\caches\9.0.0\transforms\e2a24cc17729060d3588c74b9fcbca2f\transformed\lifecycle-viewmodel-savedstate-2.6.1\res
+com.kisanai.app-appcompat-resources-1.6.1-25 C:\Users\user\.gradle\caches\9.0.0\transforms\eeded6277e95eb945ac29b18333e2ba1\transformed\appcompat-resources-1.6.1\res
+com.kisanai.app-activity-1.8.2-26 C:\Users\user\.gradle\caches\9.0.0\transforms\f9315193206ba8f3bb9e63e43fcb4b4d\transformed\activity-1.8.2\res
+com.kisanai.app-pngs-27 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\generated\res\pngs\debug
+com.kisanai.app-resValues-28 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\generated\res\resValues\debug
+com.kisanai.app-updated_navigation_xml-29 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\generated\updated_navigation_xml\debug
+com.kisanai.app-packageDebugResources-30 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.kisanai.app-packageDebugResources-31 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.kisanai.app-debug-32 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.kisanai.app-debug-33 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\src\debug\res
+com.kisanai.app-main-34 C:\Users\user\Documents\Sujay\Study\B.Tech\Sem 6\GenAI\CA\Kisan_AI\KisanAI-Android\app\src\main\res

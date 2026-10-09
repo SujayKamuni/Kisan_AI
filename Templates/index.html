@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisanAI - Smart Farming Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green-dark: #1a3a2a;
+    --green-mid: #2d6a4f;
+    --green-light: #52b788;
+    --green-pale: #d8f3dc;
+    --amber: #f4a261;
+    --cream: #fefae0;
+    --nav-h: 60px;
+  }
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--green-dark); overflow: hidden; }
+
+  nav {
+    height: var(--nav-h);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 2rem; background: #0d2018;
+    border-bottom: 1px solid rgba(82,183,136,0.12);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--green-pale); }
+  .logo span { color: var(--amber); }
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+  .nav-links a { color: #7db89a; text-decoration: none; font-size: 0.85rem; }
+  .nav-badge { background: rgba(82,183,136,0.15); border: 1px solid rgba(82,183,136,0.3); color: var(--green-light); font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; }
+
+  .app-shell {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    height: calc(100vh - var(--nav-h));
+    margin-top: var(--nav-h);
+  }
+
+  /* ── CHAT PANEL ── */
+  .chat-panel {
+    display: flex; flex-direction: column;
+    background: #0d1f15;
+    border-right: 1px solid rgba(82,183,136,0.1);
+    overflow: hidden;
+  }
+  .chat-panel-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(82,183,136,0.08);
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-mid); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .chat-panel-header h3 { font-size: 0.95rem; font-weight: 500; color: var(--green-pale); }
+  .chat-panel-header p  { font-size: 0.78rem; color: #4a8a6a; }
+  .status-pill { margin-left: auto; display: flex; align-items: center; gap: 6px; background: rgba(82,183,136,0.08); border: 1px solid rgba(82,183,136,0.15); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; color: #7db89a; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #4a7a5a; transition: background 0.3s; flex-shrink: 0; }
+  .status-dot.recording { background: #e74c3c; animation: pulse 1s infinite; }
+  .status-dot.thinking  { background: var(--amber); animation: pulse 1s infinite; }
+  .status-dot.ready     { background: var(--green-light); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .chat-messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(82,183,136,0.2); border-radius: 2px; }
+
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #2d5a3d; text-align: center; gap: 12px; }
+  .empty-state .ei { font-size: 3rem; opacity: 0.4; }
+  .empty-state p { font-size: 0.9rem; line-height: 1.6; max-width: 320px; font-weight: 300; }
+
+  .msg-row { display: flex; gap: 10px; }
+  .msg-row.farmer { flex-direction: row-reverse; }
+  .msg-icon { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; margin-top: 2px; }
+  .ai-icon     { background: var(--green-mid); }
+  .farmer-icon { background: rgba(82,183,136,0.2); }
+  .msg-content { flex: 1; min-width: 0; }
+  .msg-label { font-size: 0.7rem; color: #4a7a5a; margin-bottom: 4px; }
+  .msg-row.farmer .msg-label { text-align: right; }
+
+  .bubble { display: inline-block; border-radius: 16px; padding: 12px 16px; font-size: 0.92rem; line-height: 1.6; word-wrap: break-word; }
+  .msg-row.farmer .bubble { background: rgba(82,183,136,0.14); color: #a8dfc0; border-bottom-right-radius: 4px; float: right; clear: both; max-width: 85%; }
+  .msg-row.ai    .bubble  { background: rgba(255,255,255,0.05); color: #b8d4c4; border-bottom-left-radius: 4px; width: 100%; }
+  .msg-row.error .bubble  { background: rgba(231,76,60,0.08); color: #e88080; border-bottom-left-radius: 4px; }
+
+  /* Markdown styles */
+  .bubble h1,.bubble h2,.bubble h3 { font-family: 'Playfair Display', serif; color: var(--green-light); margin: 0.8rem 0 0.4rem; font-weight: 600; }
+  .bubble h1 { font-size: 1.1rem; } .bubble h2 { font-size: 1rem; } .bubble h3 { font-size: 0.95rem; }
+  .bubble p  { margin-bottom: 0.6rem; } .bubble p:last-child { margin-bottom: 0; }
+  .bubble ul, .bubble ol { padding-left: 1.4rem; margin-bottom: 0.6rem; display: block; }
+  .bubble li { margin-bottom: 0.4rem; display: list-item; line-height: 1.6; }
+  .bubble ul { list-style-type: disc; }
+  .bubble ol { list-style-type: decimal; }
+  .bubble strong { color: var(--green-light); font-weight: 500; }
+  .bubble em { color: #d4a96a; font-style: italic; }
+  .bubble code { background: rgba(82,183,136,0.12); color: var(--green-light); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: monospace; }
+  .bubble pre  { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 14px; overflow-x: auto; margin: 0.6rem 0; }
+  .bubble pre code { background: none; padding: 0; }
+  .bubble hr { border: none; border-top: 1px solid rgba(82,183,136,0.15); margin: 0.8rem 0; }
+  .bubble blockquote { border-left: 3px solid var(--green-mid); padding-left: 12px; color: #7db89a; margin: 0.6rem 0; font-style: italic; }
+  .bubble table { width: 100%; border-collapse: collapse; margin: 0.6rem 0; font-size: 0.85rem; }
+  .bubble th { background: rgba(82,183,136,0.15); color: var(--green-light); padding: 6px 10px; text-align: left; }
+  .bubble td { padding: 6px 10px; border-bottom: 1px solid rgba(82,183,136,0.08); }
+
+  .typing-indicator { display: flex; align-items: center; gap: 5px; padding: 12px 16px; }
+  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-light); animation: typing 1.2s ease-in-out infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+  /* ── CONTROLS PANEL ── */
+  .controls-panel { display: flex; flex-direction: column; background: #111f18; overflow-y: auto; padding: 1.5rem; gap: 1.2rem; }
+  .controls-panel::-webkit-scrollbar { width: 4px; }
+  .controls-panel::-webkit-scrollbar-thumb { background: rgba(82,183,136,0.15); border-radius: 2px; }
+
+  .ctrl-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(82,183,136,0.1); border-radius: 16px; padding: 1.2rem; }
+  .ctrl-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #4a7a5a; font-weight: 500; margin-bottom: 1rem; }
+
+  .lang-sel-btn { flex:1; padding:7px 4px; background:rgba(255,255,255,0.03); border:1px solid rgba(82,183,136,0.12); border-radius:10px; color:#7db89a; font-size:0.78rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .lang-sel-btn.active { background:rgba(82,183,136,0.2); border-color:rgba(82,183,136,0.5); color:var(--green-light); font-weight:500; }
+  .lang-sel-btn:hover { border-color:rgba(82,183,136,0.3); color:var(--green-pale); }
+
+  .tab-row { display: flex; gap: 6px; margin-bottom: 1rem; }
+  .tab-btn { flex: 1; padding: 8px 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(82,183,136,0.12); border-radius: 10px; color: #7db89a; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { background: rgba(82,183,136,0.15); border-color: rgba(82,183,136,0.4); color: var(--green-light); font-weight: 500; }
+
+  .duration-row { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+  .duration-row label { font-size: 0.78rem; color: #7db89a; flex-shrink: 0; }
+  .duration-row input[type=range] { flex: 1; accent-color: var(--green-light); }
+  .duration-row span { font-size: 0.78rem; color: var(--green-light); min-width: 26px; }
+
+  .visualizer { display: flex; align-items: center; justify-content: center; gap: 3px; height: 32px; margin-bottom: 1rem; }
+  .v-bar { width: 3px; background: rgba(82,183,136,0.2); border-radius: 2px; height: 5px; }
+  .v-bar.active { background: var(--green-light); animation: wave 1s ease-in-out infinite; }
+  .v-bar:nth-child(2){animation-delay:0.1s} .v-bar:nth-child(3){animation-delay:0.2s} .v-bar:nth-child(4){animation-delay:0.3s} .v-bar:nth-child(5){animation-delay:0.4s} .v-bar:nth-child(6){animation-delay:0.5s} .v-bar:nth-child(7){animation-delay:0.3s} .v-bar:nth-child(8){animation-delay:0.2s}
+  @keyframes wave { 0%,100%{height:5px} 50%{height:24px} }
+
+  .mic-btn { width: 100%; padding: 13px; background: var(--green-light); color: var(--green-dark); border: none; border-radius: 50px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .mic-btn:hover { background: #6fcfa0; }
+  .mic-btn.recording { background: #e74c3c; color: white; }
+  .mic-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .text-input-area { display: none; }
+  .text-input-area.visible { display: block; }
+  .voice-input-area.hidden { display: none; }
+
+  .text-input { width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(82,183,136,0.2); border-radius: 12px; color: var(--green-pale); font-size: 0.88rem; font-family: 'DM Sans', sans-serif; resize: none; outline: none; line-height: 1.5; transition: border-color 0.2s; min-height: 80px; max-height: 160px; margin-bottom: 8px; }
+  .text-input::placeholder { color: #2d5a3d; }
+  .text-input:focus { border-color: rgba(82,183,136,0.45); }
+
+  .send-btn { width: 100%; padding: 11px; background: var(--green-light); color: var(--green-dark); border: none; border-radius: 50px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .send-btn:hover { background: #6fcfa0; }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .audio-section { display: none; }
+  .audio-section.visible { display: block; }
+  .audio-section audio { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+  .play-btn { width: 100%; padding: 9px; background: rgba(82,183,136,0.1); color: var(--green-light); border: 1px solid rgba(82,183,136,0.25); border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; display: none; }
+  .play-btn:hover { background: rgba(82,183,136,0.2); }
+
+  .info-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .info-card { flex: 1; background: rgba(82,183,136,0.06); border: 1px solid rgba(82,183,136,0.1); border-radius: 10px; padding: 10px; text-align: center; }
+  .info-card .val { font-size: 1.3rem; color: var(--green-light); font-weight: 500; font-family: 'Playfair Display', serif; }
+  .info-card .lbl { font-size: 0.7rem; color: #4a7a5a; margin-top: 2px; }
+
+  .lang-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lang-chip { background: rgba(82,183,136,0.08); border: 1px solid rgba(82,183,136,0.15); color: #7db89a; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; }
+  .lang-chip.active { background: rgba(82,183,136,0.18); color: var(--green-light); border-color: rgba(82,183,136,0.35); }
+
+  .clear-btn { width: 100%; padding: 9px; background: transparent; color: #4a7a5a; border: 1px solid rgba(82,183,136,0.1); border-radius: 8px; font-size: 0.82rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .clear-btn:hover { color: #e88080; border-color: rgba(231,76,60,0.2); background: rgba(231,76,60,0.05); }
+
+  /* ── WEATHER WIDGET ── */
+  .weather-widget { background: linear-gradient(135deg, rgba(45,106,79,0.3) 0%, rgba(13,31,21,0.6) 100%); border: 1px solid rgba(82,183,136,0.2); border-radius: 16px; padding: 1.1rem 1.2rem; }
+  .weather-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.8rem; }
+  .weather-city { font-size: 0.82rem; color: var(--green-light); font-weight: 500; }
+  .weather-time { font-size: 0.68rem; color: #3a6a4a; }
+  .weather-main { display: flex; align-items: center; gap: 12px; margin-bottom: 0.8rem; }
+  .weather-icon { font-size: 2.2rem; line-height: 1; }
+  .weather-temp { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green-pale); line-height: 1; }
+  .weather-temp sup { font-size: 0.9rem; vertical-align: super; }
+  .weather-desc { font-size: 0.78rem; color: #7db89a; text-transform: capitalize; margin-top: 2px; }
+  .weather-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .weather-stat { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px 8px; display: flex; align-items: center; gap: 6px; }
+  .weather-stat .ws-icon { font-size: 0.85rem; }
+  .weather-stat .ws-val { font-size: 0.78rem; color: var(--green-pale); font-weight: 500; }
+  .weather-stat .ws-lbl { font-size: 0.65rem; color: #4a7a5a; }
+  .weather-farm-tip { background: rgba(244,162,97,0.08); border: 1px solid rgba(244,162,97,0.15); border-radius: 8px; padding: 7px 10px; font-size: 0.76rem; color: #d4a06a; line-height: 1.5; margin-top: 0.7rem; }
+  .weather-farm-tip strong { color: var(--amber); }
+  .weather-loc-btn { width: 100%; padding: 8px; background: rgba(82,183,136,0.08); color: #7db89a; border: 1px solid rgba(82,183,136,0.15); border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-bottom: 0.8rem; }
+  .weather-loc-btn:hover { background: rgba(82,183,136,0.15); color: var(--green-pale); }
+  .weather-loc-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .weather-placeholder { text-align: center; color: #2d5a3d; font-size: 0.82rem; padding: 0.5rem 0; }
+
+  @media(max-width: 768px){
+    .app-shell { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+    .controls-panel { max-height: 320px; border-top: 1px solid rgba(82,183,136,0.1); }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Kisan<span>AI</span></div>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#">Features</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+    <div class="nav-badge">🌾 Agriculture AI</div>
+  </div>
+</nav>
+
+<div class="app-shell">
+
+  <!-- ── CHAT PANEL ── -->
+  <div class="chat-panel">
+    <div class="chat-panel-header">
+      <div class="chat-avatar">🌿</div>
+      <div>
+        <h3>KisanAI Assistant</h3>
+        <p>Hindi · Marathi · English</p>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot ready" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="empty-state" id="emptyState">
+        <div class="ei">🌱</div>
+        <p>Ask your farming question using voice or text.<br>Get expert advice in Hindi, Marathi, or English.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTROLS PANEL ── -->
+  <div class="controls-panel">
+
+    <div class="ctrl-section">
+      <div class="ctrl-title">Ask your question</div>
+      <div style="margin-bottom: 1rem;">
+        <div style="font-size:0.75rem; color:#4a7a5a; margin-bottom:6px;">Speaking in</div>
+        <div style="display:flex; gap:6px;">
+          <button class="lang-sel-btn active" id="ls-en" onclick="selectLang('en')">English</button>
+          <button class="lang-sel-btn"        id="ls-hi" onclick="selectLang('hi')">हिंदी</button>
+          <button class="lang-sel-btn"        id="ls-mr" onclick="selectLang('mr')">मराठी</button>
+        </div>
+      </div>
+
+      <div class="tab-row">
+        <button class="tab-btn active" id="tabVoice" onclick="switchTab('voice')">🎙️ Voice</button>
+        <button class="tab-btn"        id="tabText"  onclick="switchTab('text')">⌨️ Text</button>
+      </div>
+
+      <!-- Voice -->
+      <div class="voice-input-area" id="voiceInputArea">
+        <div class="duration-row">
+          <label>Duration</label>
+          <input type="range" id="durationSlider" min="3" max="15" value="5" step="1">
+          <span id="durationVal">5s</span>
+        </div>
+        <div class="visualizer" id="visualizer">
+          <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+          <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+          <div class="v-bar"></div><div class="v-bar"></div>
+        </div>
+        <button class="mic-btn" id="micBtn" onclick="startPipeline()">
+          🎙️ <span id="micBtnText">Tap to Speak</span>
+        </button>
+      </div>
+
+      <!-- Text -->
+      <div class="text-input-area" id="textInputArea">
+        <textarea class="text-input" id="textInput"
+          placeholder="Type your farming question here...&#10;Hindi, Marathi or English supported"
+          onkeydown="handleEnter(event)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendText()">➤ Send Question</button>
+      </div>
+    </div>
+
+    <!-- Audio -->
+    <div class="ctrl-section audio-section" id="audioSection">
+      <div class="ctrl-title">🔊 AI Response Audio</div>
+      <audio id="audioEl" controls></audio>
+      <button class="play-btn" id="playBtn" onclick="playAudio()">▶ Play Response</button>
+    </div>
+
+    <!-- Weather -->
+    <div class="ctrl-section">
+      <div class="ctrl-title">🌤 Field Weather</div>
+      <button class="weather-loc-btn" id="locBtn" onclick="requestLocation()">📍 Share my location for weather</button>
+      <div id="weatherDisplay">
+        <div class="weather-placeholder">Enable location to get real-time weather context in AI answers</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="ctrl-section">
+      <div class="ctrl-title">Session</div>
+      <div class="info-row">
+        <div class="info-card"><div class="val" id="msgCount">0</div><div class="lbl">Messages</div></div>
+        <div class="info-card"><div class="val" id="langDetected">—</div><div class="lbl">Language</div></div>
+      </div>
+      <button class="clear-btn" onclick="clearChat()">🗑 Clear conversation</button>
+    </div>
+
+    <!-- Languages -->
+    <div class="ctrl-section">
+      <div class="ctrl-title">Supported languages</div>
+      <div class="lang-chips">
+        <div class="lang-chip active">English</div>
+        <div class="lang-chip active">हिंदी</div>
+        <div class="lang-chip active">मराठी</div>
+        <div class="lang-chip">ਪੰਜਾਬੀ soon</div>
+        <div class="lang-chip">தமிழ் soon</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script>
+  marked.setOptions({ breaks: true, gfm: true });
+
+  // ── Shared fetch headers — ngrok-skip-browser-warning bypasses interstitial ──
+  const HEADERS_JSON  = { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' };
+  const HEADERS_NGROK = { 'ngrok-skip-browser-warning': 'true' };
+
+  let currentAudioUrl = '';
+  let msgCount = 0;
+
+  // ── Location & Weather State ─────────────────────────────────────
+  let userLat = null, userLon = null;
+  let currentWeather = null;
+
+  const CONDITION_ICONS = {
+    Clear: '☀️', Clouds: '☁️', Rain: '🌧️', Drizzle: '🌦️',
+    Thunderstorm: '⛈️', Snow: '❄️', Mist: '🌫️', Fog: '🌫️',
+    Haze: '🌁', Smoke: '🌫️', Dust: '💨', Sand: '💨',
+    Tornado: '🌪️', Squall: '💨'
+  };
+
+  function getWeatherIcon(condition) {
+    return CONDITION_ICONS[condition] || '🌡️';
+  }
+
+  function getFarmingTip(w) {
+    const c = w.condition;
+    const h = w.humidity;
+    const t = w.temp_c;
+    const rain = w.rain_1h_mm;
+    if (rain > 5)  return '<strong>Heavy rain:</strong> Avoid spraying pesticides. Check drainage in fields.';
+    if (rain > 0)  return '<strong>Light rain:</strong> Skip irrigation today. Good time for transplanting seedlings.';
+    if (c === 'Thunderstorm') return '<strong>Storm alert:</strong> Stay indoors. Secure equipment and livestock.';
+    if (h > 85)    return '<strong>High humidity:</strong> Watch for fungal diseases like blight. Ensure ventilation.';
+    if (t > 38)    return '<strong>Heat stress:</strong> Irrigate in the morning/evening. Shade young crops if possible.';
+    if (t < 10)    return '<strong>Cold weather:</strong> Protect sensitive crops from frost. Delay sowing if needed.';
+    if (c === 'Clear' && t >= 20 && t <= 32) return '<strong>Ideal conditions:</strong> Good day for spraying, harvesting or field work.';
+    return '<strong>Moderate weather:</strong> Suitable for general field operations.';
+  }
+
+  function renderWeatherWidget(w) {
+    const icon = getWeatherIcon(w.condition);
+    const tip  = getFarmingTip(w);
+    const now  = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('weatherDisplay').innerHTML = `
+      <div class="weather-widget">
+        <div class="weather-top">
+          <div>
+            <div class="weather-city">📍 ${w.city}, ${w.country}</div>
+            <div class="weather-time">Updated ${now}</div>
+          </div>
+        </div>
+        <div class="weather-main">
+          <div class="weather-icon">${icon}</div>
+          <div>
+            <div class="weather-temp">${w.temp_c}<sup>°C</sup></div>
+            <div class="weather-desc">${w.description}</div>
+          </div>
+        </div>
+        <div class="weather-grid">
+          <div class="weather-stat">
+            <span class="ws-icon">💧</span>
+            <div><div class="ws-val">${w.humidity}%</div><div class="ws-lbl">Humidity</div></div>
+          </div>
+          <div class="weather-stat">
+            <span class="ws-icon">💨</span>
+            <div><div class="ws-val">${w.wind_kmh} km/h</div><div class="ws-lbl">Wind</div></div>
+          </div>
+          <div class="weather-stat">
+            <span class="ws-icon">🌡️</span>
+            <div><div class="ws-val">${w.feels_like}°C</div><div class="ws-lbl">Feels like</div></div>
+          </div>
+          <div class="weather-stat">
+            <span class="ws-icon">🌧️</span>
+            <div><div class="ws-val">${w.rain_1h_mm || 0} mm</div><div class="ws-lbl">Rain/hr</div></div>
+          </div>
+        </div>
+        <div class="weather-farm-tip">${tip}</div>
+      </div>`;
+  }
+
+  // ── Auto-detect location via IP on load (no permission needed) ──
+  async function autoDetectLocation() {
+    const btn = document.getElementById('locBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Detecting location...';
+
+    try {
+      // Use our own Flask /geolocate — avoids browser CORS/mixed-content issues entirely
+      const r = await fetch('/geolocate', { headers: HEADERS_NGROK });
+      const d = await r.json();
+      if (d.status === 'ok' && d.lat) {
+        userLat = d.lat;
+        userLon = d.lon;
+        console.log(`IP location: ${d.city}, ${d.region} (${userLat}, ${userLon})`);
+        btn.textContent = `📍 ${d.city || 'Location set'} — click for GPS`;
+        btn.disabled = false;
+        await fetchAndDisplayWeather();
+        return true;
+      }
+    } catch (e) {
+      console.warn('Geolocate failed:', e);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '📍 Tap to share location for weather';
+    return false;
+  }
+
+  async function fetchAndDisplayWeather() {
+    if (userLat === null) return;
+    try {
+      const res  = await fetch(`/weather?lat=${userLat}&lon=${userLon}`, { headers: HEADERS_NGROK });
+      const data = await res.json();
+      if (data.status === 'ok') {
+        currentWeather = data.weather;
+        renderWeatherWidget(currentWeather);
+      } else {
+        document.getElementById('weatherDisplay').innerHTML =
+          '<div class="weather-placeholder">Weather unavailable — check API key in app.py</div>';
+      }
+    } catch (e) {
+      console.warn('Weather fetch failed:', e);
+    }
+  }
+
+  // GPS upgrade — more precise than IP, shown when user clicks button
+  function requestLocation() {
+    const btn = document.getElementById('locBtn');
+    if (!navigator.geolocation) {
+      btn.textContent = '❌ GPS not supported in this browser';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '⏳ Getting GPS...';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+        btn.textContent = `✅ GPS: ${userLat.toFixed(3)}, ${userLon.toFixed(3)}`;
+        btn.disabled = false;
+        fetchAndDisplayWeather();
+        setInterval(fetchAndDisplayWeather, 30 * 60 * 1000);
+      },
+      err => {
+        btn.disabled = false;
+        const reasons = {
+          1: 'Permission denied — allow location in browser settings',
+          2: 'Position unavailable — using IP location instead',
+          3: 'Timed out — using IP location instead'
+        };
+        btn.textContent = '⚠️ ' + (reasons[err.code] || 'GPS failed — using IP location');
+        console.warn('GPS error:', err.message);
+        // IP-based coords already set from autoDetectLocation — still works
+      }
+    );
+  }
+
+  // Run IP detection immediately when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    autoDetectLocation();
+    setInterval(fetchAndDisplayWeather, 30 * 60 * 1000);
+  });
+
+  function cleanMarkdown(text) {
+    return text
+      .replace(/([^\n])\s*[\u2022\u00b7]\s*/g, '$1\n- ')
+      .replace(/^[\u2022\u00b7]\s*/gm, '- ')
+      .replace(/^\*\*([^*]+)\*\*:/gm, '### $1')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/([^\n])(\n- )/g, '$1\n$2')
+      .trim();
+  }
+
+  let selectedLang = 'en';
+
+  function selectLang(lang) {
+    selectedLang = lang;
+    ['en','hi','mr'].forEach(l => {
+      document.getElementById('ls-' + l).classList.toggle('active', l === lang);
+    });
+    const placeholders = {
+      en: 'Type your farming question here...\nEnglish supported',
+      hi: 'यहाँ अपना सवाल लिखें...\nहिंदी में लिखें',
+      mr: 'इथे तुमचा प्रश्न लिहा...\nमराठीत लिहा'
+    };
+    document.getElementById('textInput').placeholder = placeholders[lang];
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tabVoice').classList.toggle('active', tab === 'voice');
+    document.getElementById('tabText').classList.toggle('active', tab === 'text');
+    document.getElementById('voiceInputArea').classList.toggle('hidden', tab !== 'voice');
+    document.getElementById('textInputArea').classList.toggle('visible', tab === 'text');
+    if (tab === 'text') document.getElementById('textInput').focus();
+  }
+
+  function setStatus(state, text) {
+    document.getElementById('statusDot').className = 'status-dot ' + state;
+    document.getElementById('statusText').textContent = text;
+  }
+  function setVisualizer(active) {
+    document.querySelectorAll('.v-bar').forEach(b => b.classList.toggle('active', active));
+  }
+
+  function addMessage(type, label, text, isMarkdown) {
+    const messages = document.getElementById('chatMessages');
+    const empty    = document.getElementById('emptyState');
+    if (empty) empty.remove();
+
+    const row  = document.createElement('div');
+    const icon = document.createElement('div');
+    const cont = document.createElement('div');
+    const lbl  = document.createElement('div');
+    const bub  = document.createElement('div');
+
+    row.className    = 'msg-row ' + type;
+    icon.className   = 'msg-icon ' + (type === 'farmer' ? 'farmer-icon' : 'ai-icon');
+    icon.textContent = type === 'farmer' ? '👤' : type === 'error' ? '⚠️' : '🌿';
+    cont.className   = 'msg-content';
+    lbl.className    = 'msg-label';
+    lbl.textContent  = label;
+    bub.className    = 'bubble';
+
+    if (isMarkdown && type === 'ai') {
+      bub.innerHTML = marked.parse(cleanMarkdown(text));
+    } else {
+      bub.textContent = text;
+    }
+
+    cont.appendChild(lbl);
+    cont.appendChild(bub);
+    row.appendChild(icon);
+    row.appendChild(cont);
+    messages.appendChild(row);
+    messages.scrollTop = messages.scrollHeight;
+    msgCount++;
+    document.getElementById('msgCount').textContent = msgCount;
+  }
+
+  function showTyping() {
+    const messages = document.getElementById('chatMessages');
+    const row = document.createElement('div');
+    row.className = 'msg-row ai';
+    row.id = 'typingIndicator';
+    row.innerHTML = `<div class="msg-icon ai-icon">🌿</div><div class="msg-content"><div class="msg-label">KisanAI is thinking...</div><div class="bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
+    messages.appendChild(row);
+    messages.scrollTop = messages.scrollHeight;
+  }
+  function hideTyping() {
+    const t = document.getElementById('typingIndicator');
+    if (t) t.remove();
+  }
+
+  function playAudio() {
+    const audio = document.getElementById('audioEl');
+    audio.src = currentAudioUrl + '?t=' + Date.now();
+    audio.load();
+    audio.play().catch(e => console.warn('Play failed:', e));
+  }
+  function showAudio(url) {
+    currentAudioUrl = url;
+    const section = document.getElementById('audioSection');
+    const audio   = document.getElementById('audioEl');
+    const playBtn = document.getElementById('playBtn');
+    section.classList.add('visible');
+    audio.src = url + '?t=' + Date.now();
+    audio.load();
+    audio.play()
+      .then(() => { playBtn.style.display = 'none'; })
+      .catch(() => { playBtn.style.display = 'block'; });
+  }
+
+  async function clearChat() {
+    await fetch('/clear_history', { method: 'POST', headers: HEADERS_NGROK });
+    document.getElementById('chatMessages').innerHTML = `<div class="empty-state" id="emptyState"><div class="ei">🌱</div><p>Ask your farming question using voice or text.<br>Get expert advice in Hindi, Marathi, or English.</p></div>`;
+    msgCount = 0;
+    document.getElementById('msgCount').textContent = '0';
+    document.getElementById('langDetected').textContent = '—';
+    document.getElementById('audioSection').classList.remove('visible');
+    setStatus('ready', 'Ready');
+  }
+
+  function handleEnter(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(); }
+  }
+
+  async function sendText() {
+    const input   = document.getElementById('textInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const query   = input.value.trim();
+    if (!query) return;
+    addMessage('farmer', 'You typed', query, false);
+    input.value = '';
+    input.style.height = 'auto';
+    sendBtn.disabled = true;
+    showTyping();
+    setStatus('thinking', 'Thinking...');
+    try {
+      const res  = await fetch('/ask', {
+        method: 'POST',
+        headers: HEADERS_JSON,
+        body: JSON.stringify({ query, language: selectedLang, lat: userLat, lon: userLon })
+      });
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) {
+        const raw = await res.text();
+        console.error('Non-JSON from /ask:', raw.substring(0, 200));
+        throw new Error('Server returned HTML — check ngrok warning page');
+      }
+      const data = await res.json();
+      hideTyping();
+      if (data.status !== 'ok') throw new Error(data.message);
+      addMessage('ai', 'KisanAI', data.answer, true);
+      if (data.weather) { currentWeather = data.weather; renderWeatherWidget(data.weather); }
+      showAudio(data.audio_url);
+      setStatus('ready', 'Done!');
+    } catch (err) {
+      hideTyping();
+      addMessage('error', 'Error', 'Failed: ' + err.message, false);
+      setStatus('', 'Error');
+    }
+    sendBtn.disabled = false;
+  }
+
+  // ── VOICE PIPELINE ───────────────────────────────────────────────
+  // Records audio in the browser via MediaRecorder API.
+  // Works on localhost AND remote ngrok URLs.
+  // Audio blob is sent directly to Flask /transcribe — server mic never used.
+  async function startPipeline() {
+    const btn      = document.getElementById('micBtn');
+    const btnText  = document.getElementById('micBtnText');
+    const duration = parseInt(document.getElementById('durationSlider').value);
+
+    // ── Step 1: Request mic permission ─────────────────────────────
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      addMessage('error', 'Error', 'Microphone access denied: ' + err.message, false);
+      setStatus('', 'Mic denied');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('recording');
+    btnText.textContent = 'Recording...';
+    setStatus('recording', 'Listening...');
+    setVisualizer(true);
+
+    // ── Step 2: Pick best MIME type supported by this browser ───────
+    // Chrome → webm/opus, Firefox → ogg/opus, Safari → mp4
+    const mimeType = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/ogg;codecs=opus',
+      'audio/ogg',
+      'audio/mp4',
+    ].find(m => MediaRecorder.isTypeSupported(m)) || '';
+
+    console.log('🎤 MIME type selected:', mimeType || 'browser default');
+
+    // ── Step 3: Create recorder with timeslice ──────────────────────
+    // timeslice=100 means ondataavailable fires every 100ms DURING recording.
+    // Without this, some browsers only fire once at stop() and the single
+    // chunk can be empty or corrupt — this is the most common recording bug.
+    const chunks = [];
+    let recorder;
+    try {
+      recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+    } catch (e) {
+      recorder = new MediaRecorder(stream); // fallback: let browser decide
+    }
+
+    recorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) {
+        chunks.push(e.data);
+        console.log(`  chunk ${chunks.length}: ${e.data.size} bytes`);
+      }
+    };
+
+    recorder.onstop = async () => {
+      // Release mic — browser mic indicator disappears immediately
+      stream.getTracks().forEach(t => t.stop());
+      setVisualizer(false);
+      btn.classList.remove('recording');
+      btnText.textContent = 'Transcribing...';
+      setStatus('thinking', 'Converting speech...');
+
+      const totalBytes = chunks.reduce((a, c) => a + c.size, 0);
+      console.log(`🎤 Done | chunks: ${chunks.length} | bytes: ${totalBytes}`);
+
+      // Guard: no audio captured at all
+      if (chunks.length === 0 || totalBytes < 500) {
+        addMessage('error', 'Error', 'No audio captured. Please check mic permissions and try again.', false);
+        setStatus('', 'No audio');
+        resetBtn();
+        return;
+      }
+
+      // ── Step 4: Send blob to /transcribe ───────────────────────────
+      const actualMime = recorder.mimeType || mimeType || 'audio/webm';
+      const ext = actualMime.includes('ogg') ? '.ogg'
+                : actualMime.includes('mp4') ? '.mp4'
+                : '.webm';
+
+      const blob     = new Blob(chunks, { type: actualMime });
+      const formData = new FormData();
+      formData.append('audio', blob, 'recording' + ext);
+      formData.append('hint_lang', selectedLang);
+
+      console.log(`📤 Uploading ${blob.size} bytes | type: ${actualMime} | ext: ${ext}`);
+
+      let query, lang;
+      try {
+        // IMPORTANT: Do NOT manually set Content-Type for FormData.
+        // The browser must set it automatically so the multipart boundary is correct.
+        const res = await fetch('/transcribe', {
+          method: 'POST',
+          headers: HEADERS_NGROK,
+          body: formData
+        });
+
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+          const raw = await res.text();
+          console.error('Non-JSON from /transcribe:', raw.substring(0, 200));
+          throw new Error('Server returned HTML instead of JSON — ngrok warning page may be blocking the request');
+        }
+
+        const data = await res.json();
+        if (data.status !== 'ok') throw new Error(data.message);
+        query = data.text;
+        lang  = data.language;
+
+        if (!query) {
+          addMessage('error', 'Error', 'Could not understand audio. Please speak clearly and try again.', false);
+          setStatus('', 'Not understood');
+          resetBtn();
+          return;
+        }
+
+        addMessage('farmer', 'You said', query, false);
+        document.getElementById('langDetected').textContent =
+          lang === 'hi' ? 'HI' : lang === 'mr' ? 'MR' : 'EN';
+
+      } catch (err) {
+        addMessage('error', 'Error', 'Transcription failed: ' + err.message, false);
+        setStatus('', 'Transcription failed');
+        resetBtn();
+        return;
+      }
+
+      // ── Step 5: Get AI response ─────────────────────────────────────
+      btnText.textContent = 'Thinking...';
+      setStatus('thinking', 'Getting advice...');
+      showTyping();
+      try {
+        const res = await fetch('/ask', {
+          method: 'POST',
+          headers: HEADERS_JSON,
+          body: JSON.stringify({ query, language: lang, lat: userLat, lon: userLon })
+        });
+
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+          const raw = await res.text();
+          console.error('Non-JSON from /ask:', raw.substring(0, 200));
+          throw new Error('Server returned HTML instead of JSON');
+        }
+
+        const data = await res.json();
+        hideTyping();
+        if (data.status !== 'ok') throw new Error(data.message);
+        addMessage('ai', 'KisanAI', data.answer, true);
+        if (data.weather) { currentWeather = data.weather; renderWeatherWidget(data.weather); }
+        showAudio(data.audio_url);
+        setStatus('ready', 'Done!');
+      } catch (err) {
+        hideTyping();
+        addMessage('error', 'Error', 'AI failed: ' + err.message, false);
+        setStatus('', 'AI error');
+      }
+      resetBtn();
+    };
+
+    // Start with 100ms timeslice — critical for reliable chunk collection
+    recorder.start(100);
+
+    // Auto-stop after chosen duration
+    setTimeout(() => {
+      if (recorder.state === 'recording') recorder.stop();
+    }, duration * 1000);
+  }
+
+  function resetBtn() {
+    const btn = document.getElementById('micBtn');
+    btn.disabled = false;
+    btn.classList.remove('recording');
+    document.getElementById('micBtnText').textContent = 'Tap to Speak';
+    setVisualizer(false);
+  }
+
+  document.getElementById('durationSlider').addEventListener('input', function() {
+    document.getElementById('durationVal').textContent = this.value + 's';
+  });
+  document.getElementById('textInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  });
+</script>
+</body>
+</html>

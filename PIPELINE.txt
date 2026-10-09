@@ -1,0 +1,812 @@
+================================================================================
+            KISANAI — DETAILED SYSTEM PIPELINE DOCUMENTATION
+            Agriculture Voice Assistant for Indian Farmers
+================================================================================
+
+Author       : Sujay Kamuni, Harsh Patil, Rachit Patil, Chirag Patil
+Course       : B.Tech Sem 6 — Generative AI (CA Project)
+Repository   : Kisan_AI
+Date Created : April 2026
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+  1. Project Overview
+  2. System Architecture
+  3. Technology Stack & Dependencies
+  4. Directory Structure
+  5. Pipeline Stage 1 — Application Startup & RAG Index Build
+  6. Pipeline Stage 2 — Audio Capture (Frontend)
+  7. Pipeline Stage 3 — Audio Upload & Validation
+  8. Pipeline Stage 4 — Audio Conversion (FFmpeg)
+  9. Pipeline Stage 5 — Speech-To-Text (STT) & Language Detection
+  10. Pipeline Stage 6 — Geolocation & Weather Enrichment
+  11. Pipeline Stage 7 — RAG Context Retrieval (BM25)
+  12. Pipeline Stage 8 — LLM Inference (Ollama / Llama 3)
+  13. Pipeline Stage 9 — Text-To-Speech (TTS) with gTTS
+  14. Pipeline Stage 10 — Response Delivery to Frontend
+  15. Pipeline Stage 11 — Public Deployment via ngrok
+  16. Data Flows & API Endpoints
+  17. Datasets Used in RAG Index
+  18. Multi-Language Support
+  19. Conversation Memory System
+  20. Weather Integration
+  21. Mobile / Android WebView Support
+  22. Error Handling Strategy
+  23. Configuration Reference
+  24. End-to-End Request Lifecycle (Summary)
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+KisanAI is a conversational voice assistant designed specifically for Indian
+farmers. It combines state-of-the-art speech recognition, local Large Language
+Model (LLM) inference, and Retrieval-Augmented Generation (RAG) to deliver
+accurate, contextual agricultural advice in English, Hindi, and Marathi.
+
+Key capabilities:
+  - Accepts spoken voice input from a web browser or Android WebView app
+  - Automatically detects the farmer's language (English / Hindi / Marathi)
+  - Retrieves relevant agricultural facts from a locally-indexed knowledge base
+  - Fetches real-time weather for the farmer's location
+  - Generates advice using a locally-running Llama 3 LLM via Ollama
+  - Responds in both text and synthesized speech (MP3) in the farmer's language
+  - Exposes the local server to the internet via ngrok for remote access
+
+================================================================================
+2. SYSTEM ARCHITECTURE
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │                        FRONTEND (Browser / Android WebView)             │
+  │                                                                         │
+  │   [index.html / mobile.html]                                            │
+  │   - Language selector (Auto / English / Hindi / Marathi)                │
+  │   - Record button → MediaRecorder API → WebM/OGG audio blob             │
+  │   - Sends audio → POST /transcribe                                      │
+  │   - Sends text query + lat/lon → POST /ask                              │
+  │   - Plays back response.mp3 via <audio> element                         │
+  └──────────────────────────┬──────────────────────────────────────────────┘
+                             │ HTTP (local or ngrok tunnel)
+  ┌──────────────────────────▼──────────────────────────────────────────────┐
+  │                     FLASK BACKEND  (app.py, port 5000)                  │
+  │                                                                         │
+  │  ┌──────────────┐   ┌────────────────┐   ┌─────────────────────────┐   │
+  │  │  /transcribe │   │    /ask        │   │  /weather | /geolocate  │   │
+  │  │  Audio STT   │   │  LLM + RAG     │   │  OpenWeatherMap / IP    │   │
+  │  └──────┬───────┘   └───────┬────────┘   └─────────────────────────┘   │
+  │         │                   │                                           │
+  │  ┌──────▼───────────────────▼────────────────────────────────────────┐  │
+  │  │                    CORE PROCESSING PIPELINE                       │  │
+  │  │                                                                   │  │
+  │  │  [1] FFmpeg Audio Conversion (WebM → 16kHz Mono WAV)             │  │
+  │  │  [2] Google Speech Recognition (en-IN / hi-IN / mr-IN)           │  │
+  │  │  [3] Script-based Language Detection                             │  │
+  │  │  [4] BM25 RAG Retrieval (rank_bm25)                              │  │
+  │  │  [5] Weather Context Injection (OpenWeatherMap API)              │  │
+  │  │  [6] Ollama LLM Inference (Llama 3 — local, CPU mode)           │  │
+  │  │  [7] gTTS Text-To-Speech → response.mp3                         │  │
+  │  └───────────────────────────────────────────────────────────────────┘  │
+  └──────────────────────────────────────────────────────────────────────────┘
+                             │
+  ┌──────────────────────────▼──────────────────────────────────────────────┐
+  │                    OLLAMA (Local LLM Server)                            │
+  │          Model: llama3   |   CPU-only   |   Temperature: 0.3           │
+  └──────────────────────────────────────────────────────────────────────────┘
+                             │
+  ┌──────────────────────────▼──────────────────────────────────────────────┐
+  │               RAG Knowledge Base (Dataset_RAG_Ready/)                  │
+  │  - BM25 index built at startup from 6 agricultural JSON datasets       │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+3. TECHNOLOGY STACK & DEPENDENCIES
+================================================================================
+
+  Component                Library / Tool         Purpose
+  ─────────────────────────────────────────────────────────────────────────
+  Web Framework            Flask                  HTTP server, routing, REST API
+  LLM Backend              Ollama (llama3)        Local LLM inference engine
+  Speech-to-Text           SpeechRecognition      Google Speech API wrapper
+  Audio Conversion         imageio_ffmpeg          Bundled FFmpeg binary (WebM→WAV)
+  Text-to-Speech           gTTS (Google TTS)      MP3 synthesis in 3 languages
+  RAG Retrieval            rank-bm25 (BM25Okapi)  Keyword-based document retrieval
+  Weather API              OpenWeatherMap          Real-time weather data
+  Geolocation              ip-api.com / ipinfo.io  Server-side IP geolocation
+  Public Tunneling         pyngrok / ngrok         Exposes local server publicly
+  HTTP Client              requests                API calls to weather/geo APIs
+  Android Wrapper          Android WebView         Native app wrapping mobile.html
+
+  Python Version: 3.10+
+  OS Tested On: Windows 11
+
+  Full requirements (requirement.txt):
+    flask
+    ollama
+    gTTS
+    SpeechRecognition
+    pydub
+    requests
+    rank-bm25
+    pyngrok
+
+================================================================================
+4. DIRECTORY STRUCTURE
+================================================================================
+
+  Kisan_AI/
+  ├── app.py                          ← Main Flask application (600 lines)
+  ├── rag_pipeline.py                 ← BM25 RAG index builder & retriever
+  ├── run_ngrok.py                    ← ngrok tunnel launcher
+  ├── requirement.txt                 ← Python dependencies
+  ├── farmer_voice.wav                ← Sample voice recording (test file)
+  │
+  ├── Templates/
+  │   ├── index.html                  ← Full desktop web UI (~41 KB)
+  │   └── mobile.html                 ← Mobile-optimized UI for Android WebView
+  │
+  ├── Static/
+  │   └── response.mp3                ← TTS audio output (overwritten each turn)
+  │
+  ├── Dataset_RAG_Ready/              ← Agricultural knowledge base
+  │   ├── crop_dataset_rag_ready.json          (~777 KB,  crop NPK/climate data)
+  │   ├── crop_disease_rag_ready.json          (~1 KB,    disease symptoms)
+  │   ├── fertilizer_dataset_rag_ready.json    (~28 KB,   fertilizer advice)
+  │   ├── crop_yield_dataset_rag_ready.json    (~10.1 MB, yield by country)
+  │   ├── soil_dataset_rag_ready.json          (~7.9 MB,  soil group data)
+  │   ├── rice_dataset.json                    (~44 KB,   rice seasons/varieties)
+  │   └── weather_dataset_rag_ready.json       (~526 MB,  SKIPPED — live API used)
+  │
+  └── KisanAI-Android/                ← Android Studio project (WebView wrapper)
+
+================================================================================
+5. PIPELINE STAGE 1 — APPLICATION STARTUP & RAG INDEX BUILD
+================================================================================
+
+  File: app.py (lines 1–43), rag_pipeline.py
+
+  When the Flask application starts (python app.py or python run_ngrok.py),
+  the following initialization sequence executes BEFORE any HTTP requests
+  are accepted:
+
+  STEP 1.1 — FFmpeg Binary Resolution
+    _FFMPEG_EXE = imageio_ffmpeg.get_ffmpeg_exe()
+    The bundled imageio_ffmpeg package provides a self-contained ffmpeg binary.
+    This avoids requiring ffmpeg to be on the system PATH.
+
+  STEP 1.2 — Static Directory Creation
+    os.makedirs(STATIC_DIR, exist_ok=True)
+    Ensures Static/ exists to receive response.mp3 output.
+
+  STEP 1.3 — RAG Index Build  (build_rag_index() → _pipeline.build())
+    This is the most time-consuming startup step:
+
+    a) For each dataset file in DATASET_FILES:
+       - crop_disease    → _load_standard_json()  (3 records)
+       - fertilizer      → _load_standard_json()  (~290 records)
+       - crop            → _load_standard_json()  (capped at 5,000 records)
+       - crop_yield      → _load_standard_json()  → _dedup_crop_yield()
+                           De-duplication reduces 225,000 rows to unique
+                           (crop, country) pairs.
+       - soil            → _load_standard_json()  (capped at 3,000 valid records;
+                           rows where all fields are NaN are discarded via
+                           _is_nan_text())
+       - rice            → _load_rice_dataset()   (custom nested schema flattened
+                           into descriptive sentences for seasons & varieties)
+       - weather dataset → SKIPPED (551 MB; live API is used instead)
+
+    b) All loaded documents are tokenized:
+       _tokenize(text): lowercase → remove punctuation → split → drop stop-words
+       Returns a list of meaningful keyword tokens per document.
+
+    c) BM25Okapi index is built from the tokenized corpus.
+
+    d) RAGPipeline._ready is set to True.
+
+  STEP 1.4 — Server Ready
+    print("✅ KisanAI ready!")
+    Flask is now accepting connections on 0.0.0.0:5000.
+
+================================================================================
+6. PIPELINE STAGE 2 — AUDIO CAPTURE (FRONTEND)
+================================================================================
+
+  File: Templates/index.html, Templates/mobile.html
+
+  STEP 2.1 — Language Selection
+    The farmer selects their preferred language from a dropdown:
+      - Auto (let the system detect)
+      - English (en)
+      - हिंदी / Hindi (hi)
+      - मराठी / Marathi (mr)
+
+    The selected value is stored as `hint_lang` and sent with every request.
+
+  STEP 2.2 — Microphone Access
+    The browser calls navigator.mediaDevices.getUserMedia({ audio: true }).
+    On Android, the WebView is configured to grant microphone permissions
+    programmatically via the Android native app.
+
+  STEP 2.3 — Recording
+    MediaRecorder records the farmer's speech as a WebM/OGG audio blob.
+    Recording starts on button press and stops on button release or timeout.
+
+  STEP 2.4 — Upload
+    The audio blob is wrapped in a FormData object:
+      formData.append("audio", audioBlob, "recording.webm")
+      formData.append("hint_lang", selectedLang)
+    Sent as a POST request to /transcribe.
+
+  STEP 2.5 — Geolocation (Parallel)
+    The browser simultaneously calls /geolocate (GET) to obtain the farmer's
+    GPS coordinates for weather context injection. Coordinates are stored in JS
+    variables (userLat, userLon) for inclusion in the /ask request.
+
+================================================================================
+7. PIPELINE STAGE 3 — AUDIO UPLOAD & VALIDATION
+================================================================================
+
+  File: app.py — /transcribe route (lines 406–478)
+
+  STEP 3.1 — Extract hint_lang
+    Reads from FormData field "hint_lang" (from browser) or JSON body.
+    Defaults to None if not provided (triggers auto-detection).
+
+  STEP 3.2 — File Presence Check
+    if "audio" not in request.files → return 400 error immediately.
+
+  STEP 3.3 — Save to Temp File
+    audio_file.save(tmp.name) — saved with the original file extension
+    (.webm, .ogg, .mp4, .m4a, .wav) to preserve codec hints.
+
+  STEP 3.4 — File Size Guard
+    if file_size < 1000 bytes → return 400
+    This catches empty MediaRecorder blobs caused by:
+      - Microphone permission denied
+      - Recording stopped before any audio was captured
+
+================================================================================
+8. PIPELINE STAGE 4 — AUDIO CONVERSION (FFMPEG)
+================================================================================
+
+  File: app.py — convert_to_wav() (lines 132–183)
+
+  WHY THIS STEP EXISTS:
+    Browsers record audio in WebM/OGG format. Python's SpeechRecognition library
+    only accepts WAV files with PCM encoding. Direct conversion via pydub fails
+    on Windows when 'ffprobe' is not on the PATH, even if ffmpeg.exe is present.
+    Solution: call the bundled imageio_ffmpeg binary directly via subprocess,
+    bypassing ffprobe entirely.
+
+  STEP 4.1 — Format Check
+    if ext == '.wav' → skip conversion, return original path.
+
+  STEP 4.2 — FFmpeg Subprocess Call
+    Command:
+      ffmpeg -y -i <input_file> -ar 16000 -ac 1 -f wav <output_tmp.wav>
+
+    Parameters:
+      -y       : Overwrite output file without prompting
+      -i       : Input audio file (any browser format)
+      -ar 16000: Resample to 16,000 Hz (optimal for Google STT)
+      -ac 1    : Convert to mono channel (reduces noise, smaller file)
+      -f wav   : Force WAV output container
+
+  STEP 4.3 — Return
+    Returns (wav_path, should_delete=True).
+    The caller (speech_to_text) is responsible for deleting the temp WAV file
+    after transcription is complete.
+
+  STEP 4.4 — Error Handling
+    If ffmpeg exits with non-zero code or times out (>30s):
+      - Temp file is cleaned up
+      - RuntimeError is raised → caught by /transcribe → returned as HTTP 400
+
+================================================================================
+9. PIPELINE STAGE 5 — SPEECH-TO-TEXT & LANGUAGE DETECTION
+================================================================================
+
+  File: app.py — speech_to_text() (lines 186–288), detect_language() (112–128)
+
+  STEP 5.1 — Ambient Noise Adjustment
+    recognizer.adjust_for_ambient_noise(source, duration=0.3)
+    Calibrates the recognizer's energy threshold to filter background noise.
+
+  STEP 5.2 — Duration Guard
+    if duration_s < 0.5 seconds → RuntimeError
+    Catches silent recordings (e.g., mic blocked by OS audio effects).
+
+  STEP 5.3 — Language Routing
+
+    CASE A — Manual language selected (hint_lang provided):
+      recognizer.recognize_google(audio_data, language=<google_code>)
+        "en" → "en-IN"
+        "hi" → "hi-IN"
+        "mr" → "mr-IN"
+      Returns (transcribed_text, hint_lang) immediately.
+      No fallback — if STT fails, returns ("", hint_lang).
+
+    CASE B — Auto-detection (hint_lang = None):
+      Attempt 1: en-IN → if result has Latin script dominant → return ("text", "en")
+      Attempt 2: hi-IN → if result has Devanagari dominant without Marathi words
+                         → return ("text", "hi")
+      Attempt 3: mr-IN → if Marathi-specific words present → return ("text", "mr")
+      Fallback:  Return whichever attempt produced any text at all.
+      Last resort: return ("", "en")
+
+  STEP 5.4 — Script Detection (detect_language)
+    Input: transcribed text
+    Logic:
+      - Count Unicode Devanagari characters (U+0900–U+097F)
+      - If Devanagari > 20% of non-space chars:
+          Check for Marathi-specific words:
+            ["आहे", "नाही", "आणि", "करा", "पीक", "शेती", ...]
+          If found → return "mr" (Marathi)
+          Else     → return "hi" (Hindi)
+      - Else → return "en" (English / Latin script)
+
+  OUTPUT: (transcribed_text: str, detected_language: str)
+    Sent back to frontend as:
+      {"status": "ok", "text": "...", "language": "en/hi/mr"}
+
+================================================================================
+10. PIPELINE STAGE 6 — GEOLOCATION & WEATHER ENRICHMENT
+================================================================================
+
+  File: app.py — /geolocate (lines 481–531), fetch_weather() (lines 68–96)
+
+  STEP 6.1 — Server-Side IP Geolocation (/geolocate)
+    The server reads the client's IP from:
+      X-Forwarded-For header (set by ngrok/proxy)
+      X-Real-IP header
+      request.remote_addr (fallback)
+
+    Primary provider: ip-api.com
+      GET http://ip-api.com/json/{ip}?fields=status,lat,lon,city,regionName,country
+      Returns lat, lon, city, region, country
+
+    Fallback provider: ipinfo.io
+      GET https://ipinfo.io/{ip}/json
+      Parses "loc" field → "lat,lon"
+
+    WHY SERVER-SIDE:
+      Browser Geolocation API requires HTTPS and user permission. ngrok provides
+      HTTPS but browser permissions may still require user interaction. Server-side
+      IP geolocation requires no user permission and no HTTPS requirement.
+
+  STEP 6.2 — Weather Fetch (fetch_weather)
+    Called with either (lat, lon) from geolocation or a city name from text.
+
+    API: OpenWeatherMap /data/2.5/weather
+    Key: Configured via environment variable OPENWEATHER_API_KEY
+          (falls back to a default hardcoded key)
+
+    Response normalisation (_weather_from_response):
+      - Temperature: Kelvin → Celsius (subtract 273.15)
+      - Wind speed: m/s → km/h (multiply by 3.6)
+      - Visibility: metres → km (divide by 1000)
+
+    Caching:
+      Results are cached in _weather_cache with a 30-minute TTL (1800s).
+      Cache key: "{lat},{lon}" or city name string.
+      This prevents redundant API calls for the same session.
+
+    Returned fields:
+      city, country, condition, description, temp_c, feels_like,
+      humidity, wind_kmh, rain_1h_mm, visibility_km
+
+================================================================================
+11. PIPELINE STAGE 7 — RAG CONTEXT RETRIEVAL (BM25)
+================================================================================
+
+  File: rag_pipeline.py — retrieve_context() (lines 247–281)
+
+  Called from: get_llm_response() with top_k=5
+
+  STEP 7.1 — Query Tokenization
+    tokens = _tokenize(query)
+      Lowercase → remove punctuation → split → drop stop-words
+    If no tokens remain (e.g., empty or all stop-words) → return ""
+
+  STEP 7.2 — BM25 Scoring
+    scores = self._index.get_scores(tokens)
+    BM25Okapi scores every document in the index for keyword relevance.
+    BM25 (Best Matching 25) formula factors in:
+      - Term frequency (TF): how often query tokens appear in a document
+      - Inverse Document Frequency (IDF): rare tokens score higher
+      - Document length normalization: prevents long docs from dominating
+
+  STEP 7.3 — Top-K Selection
+    heapq.nlargest(top_k=5, ...) selects the 5 highest-scoring document indices.
+    Documents with score = 0 (no keyword overlap at all) are excluded.
+
+  STEP 7.4 — Context Formatting
+    Retrieved texts are formatted as:
+      "AGRICULTURAL KNOWLEDGE BASE (retrieved facts — use these to ground your answer):\n"
+      "- <document 1 text>\n"
+      "- <document 2 text>\n"
+      ...
+
+    Instructions injected into the system prompt:
+      - Treat retrieved facts as ground truth
+      - Do NOT contradict retrieved facts
+      - Do NOT reveal to the farmer that a knowledge base was used
+
+  COVERAGE:
+    The BM25 index covers:
+      - Crop NPK requirements, temperature, humidity, pH, rainfall
+      - Crop disease symptoms and treatments
+      - Fertilizer types and recommendations
+      - Crop yield statistics by (crop, country) pair
+      - Soil group classifications
+      - Rice seasons, sowing months, duration, recommended varieties by district
+
+================================================================================
+12. PIPELINE STAGE 8 — LLM INFERENCE (OLLAMA / LLAMA 3)
+================================================================================
+
+  File: app.py — get_llm_response() (lines 291–375)
+
+  Model: llama3
+  Backend: Ollama (local inference server, typically at http://localhost:11434)
+  Mode: CPU-only (num_gpu=0)
+
+  STEP 8.1 — System Prompt Construction
+    The system prompt is dynamically composed from 4 blocks:
+
+    Block A — Base Persona:
+      "You are KisanAI, an agriculture expert helping farmers in India.
+       You remember everything said in this conversation..."
+
+    Block B — RAG Context Block (if RAG returned results):
+      "AGRICULTURAL KNOWLEDGE BASE (retrieved facts):\n- ...\n- ..."
+      + Instructions: treat as ground truth, do not contradict, don't reveal source
+
+    Block C — Weather Block:
+      If weather available:
+        "[CURRENT WEATHER — {city}, {country}]: {temp_c}°C, feels {feels_like}°C,
+         {description}, humidity {humidity}%, wind {wind_kmh} km/h"
+        + Rules: never ask farmer for location, always reference conditions
+      Else:
+        "WEATHER: Not available. Do NOT ask for location. Give general advice."
+
+    Block D — Language & Format Rules:
+      - STRICT LANGUAGE RULE: reply ONLY in {lang_name} (English / Hindi / Marathi)
+      - FORMAT RULE: use "- " for bullets, **bold** for key terms
+      - Maximum 200 words per response
+
+  STEP 8.2 — Conversation History
+    conversation_history: list of {"role": "user"/"assistant", "content": "..."}
+    MAX_HISTORY = 10 exchanges (20 messages)
+    If history exceeds 20 messages → trim to last 20 (sliding window)
+
+    Full message list sent to Ollama:
+      [system_prompt] + conversation_history
+
+  STEP 8.3 — Ollama API Call
+    ollama.chat(
+        model="llama3",
+        messages=messages,
+        options={
+            "num_gpu": 0,        # CPU-only inference
+            "temperature": 0.3,   # Low temperature for factual, consistent answers
+            "top_p": 0.9,         # Nucleus sampling
+        }
+    )
+
+  STEP 8.4 — Response Extraction & History Update
+    answer = response["message"]["content"]
+    conversation_history.append({"role": "assistant", "content": answer})
+    History is maintained in-memory for the server's lifetime.
+
+================================================================================
+13. PIPELINE STAGE 9 — TEXT-TO-SPEECH (TTS) WITH gTTS
+================================================================================
+
+  File: app.py — text_to_speech() (lines 378–390)
+
+  STEP 9.1 — Text Cleaning
+    Markdown formatting stripped before TTS synthesis:
+      re.sub(r'\*+', '', text)     → remove bold markers (**)
+      re.sub(r'#+\s', '', text)    → remove heading markers (# ## ###)
+      re.sub(r'\n+', '. ', text)   → replace newlines with period-space
+
+  STEP 9.2 — Language Mapping
+    lang_map = {"en": "en", "hi": "hi", "mr": "mr"}
+    gTTS natively supports all three codes.
+
+  STEP 9.3 — Speech Synthesis
+    gTTS(text=clean_text, lang=tts_lang, slow=False)
+    Calls Google Text-to-Speech API with natural-speed synthesis.
+
+  STEP 9.4 — Save
+    Output saved to: Static/response.mp3
+    This file is overwritten on every request (single-file stateless approach).
+
+================================================================================
+14. PIPELINE STAGE 10 — RESPONSE DELIVERY TO FRONTEND
+================================================================================
+
+  File: app.py — /ask route (lines 534–565)
+
+  STEP 10.1 — JSON Response
+    {
+      "status"   : "ok",
+      "answer"   : "<LLM text response>",
+      "audio_url": "/static/response.mp3",
+      "language" : "en/hi/mr",
+      "weather"  : { city, temp_c, condition, humidity, ... }
+    }
+
+  STEP 10.2 — Frontend Rendering
+    The browser JavaScript:
+      a) Displays the answer text in a response card
+      b) Shows weather info in a dedicated weather panel
+      c) Creates an <audio> element with src="/static/response.mp3"
+      d) Calls audio.play() to auto-play the spoken response
+
+  STEP 10.3 — Audio Streaming
+    Flask serves response.mp3 from the Static/ directory via the /static route.
+    The file is served with proper MIME type (audio/mpeg).
+
+================================================================================
+15. PIPELINE STAGE 11 — PUBLIC DEPLOYMENT VIA NGROK
+================================================================================
+
+  File: run_ngrok.py
+
+  PURPOSE:
+    Exposes the local Flask server (port 5000) to the internet so that:
+      - Farmers with mobile phones can access the app from any network
+      - Android WebView app can point to the ngrok URL
+      - Testers and evaluators can access the app remotely
+
+  STEP 11.1 — Authentication
+    ngrok.set_auth_token("...") — sets the ngrok account authentication token.
+
+  STEP 11.2 — Tunnel Creation
+    public_url = ngrok.connect(5000).public_url
+    Creates an HTTPS tunnel: https://<random>.ngrok.io → http://localhost:5000
+
+  STEP 11.3 — Flask Server Start
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    use_reloader=False prevents Flask's auto-reload from spawning a second
+    ngrok tunnel (which would fail or create a duplicate).
+
+  STEP 11.4 — Output
+    Prints the public ngrok URL to the console for the user to share.
+
+================================================================================
+16. DATA FLOWS & API ENDPOINTS
+================================================================================
+
+  Endpoint          Method   Request Body / Params       Response
+  ────────────────────────────────────────────────────────────────────────
+  /                 GET      —                           index.html (desktop UI)
+  /mobile           GET      —                           mobile.html (Android UI)
+  /transcribe       POST     Multipart: audio + hint_lang JSON: {text, language}
+  /ask              POST     JSON: query, language,       JSON: {answer, audio_url,
+                             lat, lon, city                      language, weather}
+  /geolocate        GET      —                           JSON: {lat, lon, city, ...}
+  /weather          GET/POST lat, lon OR city            JSON: {weather object}
+  /clear_history    POST     —                           JSON: {status}
+  /static/response.mp3 GET  —                           MP3 audio binary stream
+
+================================================================================
+17. DATASETS USED IN RAG INDEX
+================================================================================
+
+  Dataset                         Size      Records  Content
+  ─────────────────────────────────────────────────────────────────────────────
+  crop_disease_rag_ready.json     ~1 KB     3        Disease name, symptoms,
+                                                      treatment per crop
+  fertilizer_dataset_rag_ready.json ~28 KB  ~290     Soil type, crop, recommended
+                                                      fertilizer, NPK ratio
+  crop_dataset_rag_ready.json     ~777 KB   ~2,200   N, P, K requirements;
+                                  (5,000 cap)         temp, humidity, pH, rainfall
+                                                      per crop type
+  crop_yield_dataset_rag_ready.json ~10.1 MB ~225K   Yield (hg/ha) by (crop,
+                                  (de-duped)          country, year); de-duplicated
+                                                      to unique (crop, country) pairs
+  soil_dataset_rag_ready.json     ~7.9 MB   3,000    Soil group classification;
+                                  (capped at 3K)      NaN-heavy rows filtered out
+  rice_dataset.json               ~44 KB    ~100     Rice seasons, sowing months,
+                                  (flattened)         duration, district-specific
+                                                      variety recommendations
+  weather_dataset_rag_ready.json  ~526 MB   SKIPPED  Not indexed; real-time API used
+
+================================================================================
+18. MULTI-LANGUAGE SUPPORT
+================================================================================
+
+  Language    Code  STT Locale  TTS Code  Detection Method
+  ────────────────────────────────────────────────────────────────────────
+  English     en    en-IN       en        Default; Latin script dominant
+  Hindi       hi    hi-IN       hi        Devanagari > 20% + no Marathi keywords
+  Marathi     mr    mr-IN       mr        Devanagari > 20% + Marathi keywords found
+                                          e.g. "आहे", "नाही", "पीक", "शेती"
+
+  Marathi keyword list used in detect_language():
+    ["आहे", "नाही", "आणि", "करा", "माझ्या", "तुमच्या", "आमच्या",
+     "पीक", "शेती", "मला", "कसे", "काय", "केले", "होते", "असते"]
+
+  Language Flow:
+    Farmer speaks → STT detects → LLM generates response in SAME language
+                  → gTTS synthesizes voice in SAME language
+                  → Browser plays MP3 in farmer's language
+
+  Manual Override:
+    Farmer can explicitly select their language from the UI dropdown.
+    This bypasses auto-detection and uses the chosen locale directly.
+
+================================================================================
+19. CONVERSATION MEMORY SYSTEM
+================================================================================
+
+  File: app.py (lines 18–20, 351–373)
+
+  Implementation:
+    conversation_history: list (global, in-memory)
+    MAX_HISTORY = 10 exchanges (20 messages: 10 user + 10 assistant)
+
+  How it works:
+    - Every user query is appended as {"role": "user", "content": query}
+    - Every assistant response is appended as {"role": "assistant", "content": answer}
+    - The FULL history (up to MAX_HISTORY * 2 messages) is sent to Ollama
+      on EVERY /ask request, giving the LLM full context of the conversation
+    - When history exceeds 20 messages, it is trimmed to the last 20 entries
+      (sliding window — oldest messages are dropped)
+
+  Clear History:
+    POST /clear_history → conversation_history = []
+    Provides a "Start New Conversation" capability from the UI.
+
+  Limitation:
+    Memory is server-scoped (not per-session).
+    Multiple simultaneous users share one conversation_history.
+    (Suitable for single-farmer use case in the field.)
+
+================================================================================
+20. WEATHER INTEGRATION
+================================================================================
+
+  File: app.py (lines 30–108)
+
+  Weather Lifecycle per Request:
+    1. Frontend calls /geolocate → gets lat/lon for the farmer's location
+    2. /ask request includes lat, lon (or fallback: city from query)
+    3. fetch_weather(lat, lon) → checks _weather_cache first (30-min TTL)
+    4. If not cached → GET OpenWeatherMap /data/2.5/weather
+    5. Normalized data stored in cache + injected into LLM system prompt
+    6. LLM uses weather to give contextual advice:
+         - High humidity → warn about fungal disease
+         - Rain today → advise skipping irrigation
+         - Hot temperature → suggest early morning irrigation
+    7. Weather data included in /ask JSON response for display in frontend
+
+  Cache Design:
+    Key: "{lat},{lon}" string (coordinate-based)
+    Value: {"data": weather_dict, "ts": unix_timestamp}
+    TTL: 1800 seconds (30 minutes)
+    This prevents hitting the OpenWeatherMap free-tier rate limit.
+
+================================================================================
+21. MOBILE / ANDROID WEBVIEW SUPPORT
+================================================================================
+
+  Files: Templates/mobile.html, KisanAI-Android/ (Android Studio project)
+
+  mobile.html:
+    - Mobile-first responsive layout (optimized for 5–6 inch screens)
+    - Larger touch targets for mic button
+    - Simplified UI without hover effects
+    - Same JavaScript logic as index.html
+
+  Android Native App:
+    - WebView loads the /mobile route over the ngrok HTTPS URL
+    - Overrides onPermissionRequest to grant microphone access natively
+    - Overrides onGeolocationPermissionsShowPrompt for GPS access
+    - Handles back-button navigation within the WebView
+
+================================================================================
+22. ERROR HANDLING STRATEGY
+================================================================================
+
+  Stage               Error Condition                   Response
+  ─────────────────────────────────────────────────────────────────────────────
+  Audio Upload        No "audio" field in request       HTTP 400 + clear message
+  Audio Upload        File < 1,000 bytes (empty blob)   HTTP 400 + mic check advice
+  Audio Conversion    FFmpeg non-zero exit code         HTTP 400 + ffmpeg error log
+  Audio Conversion    Conversion timeout (>30s)         HTTP 400 + timeout message
+  STT                 Audio < 0.5s duration             HTTP 400 + speak again advice
+  STT                 UnknownValueError                 Returns ("", lang) gracefully
+  STT                 Google API RequestError            Returns ("", lang) gracefully
+  Weather             API key missing or invalid        Returns None (no weather block)
+  Weather             Network timeout                   Returns None (graceful degrade)
+  Geolocation         Both ip-api and ipinfo fail       HTTP 503 + message
+  RAG                 Dataset file not found            Warning logged; index skipped
+  RAG                 Empty query or no tokens          Returns "" (no context added)
+  LLM                 Ollama server not running         Exception → HTTP 500
+  LLM                 Empty query                       HTTP 400 + "Empty query" message
+  TTS                 gTTS API failure                  Exception → HTTP 500
+  General             Unhandled exception               HTTP 500 + exception message
+
+================================================================================
+23. CONFIGURATION REFERENCE
+================================================================================
+
+  Variable               Location          Default / Value
+  ─────────────────────────────────────────────────────────────────────────────
+  OLLAMA_MODEL           app.py line 28    "llama3"
+  MAX_HISTORY            app.py line 20    10 (exchanges)
+  OPENWEATHER_API_KEY    app.py line 31    env var OR hardcoded fallback key
+  OPENWEATHER_BASE       app.py line 32    "https://api.openweathermap.org/data/2.5"
+  WEATHER_CACHE_TTL      app.py line 35    1800 seconds (30 min)
+  AUDIO_PATH             app.py line 27    Static/response.mp3
+  DATASET_DIR            rag_pipeline.py   <project_root>/Dataset_RAG_Ready/
+  MAX_RECORDS_PER_TYPE   rag_pipeline.py   crop: 5000, soil: 3000, others: None
+  LLM temperature        app.py line 366   0.3 (deterministic / factual)
+  LLM top_p              app.py line 367   0.9
+  LLM num_gpu            app.py line 365   0 (CPU-only)
+  BM25 top_k             rag_pipeline.py   5 documents per query
+  Flask port             app.py line 600   5000
+  ngrok port             run_ngrok.py      5000
+  Min audio duration     app.py line 208   0.5 seconds
+  Min audio file size    app.py line 449   1,000 bytes
+
+================================================================================
+24. END-TO-END REQUEST LIFECYCLE (SUMMARY)
+================================================================================
+
+  A complete voice-to-voice interaction follows this path:
+
+  ┌─ FARMER SPEAKS ─────────────────────────────────────────────────────────┐
+  │  1. Browser captures voice using MediaRecorder API                      │
+  │  2. Audio blob (WebM) uploaded to POST /transcribe                      │
+  │  3. Server validates file (presence + size ≥ 1,000 bytes)              │
+  │  4. FFmpeg converts WebM → 16kHz Mono WAV                              │
+  │  5. Google STT transcribes WAV in all 3 locales                        │
+  │  6. Script-based language detection picks best result                  │
+  │  7. Response: {text: "...", language: "en/hi/mr"}                      │
+  └─────────────────────────────────────────────────────────────────────────┘
+  ┌─ ENRICHMENT (PARALLEL) ──────────────────────────────────────────────────┐
+  │  8.  Browser calls GET /geolocate → server gets farmer's lat/lon        │
+  │  9.  /ask sends: {query, language, lat, lon}                            │
+  │  10. fetch_weather(lat, lon) → OpenWeatherMap API (or cache hit)        │
+  └─────────────────────────────────────────────────────────────────────────┘
+  ┌─ RAG RETRIEVAL ──────────────────────────────────────────────────────────┐
+  │  11. retrieve_context(query, top_k=5)                                   │
+  │  12. BM25 tokenizes query, scores all documents, returns top 5          │
+  │  13. Retrieved chunks formatted as "AGRICULTURAL KNOWLEDGE BASE" block  │
+  └─────────────────────────────────────────────────────────────────────────┘
+  ┌─ LLM INFERENCE ──────────────────────────────────────────────────────────┐
+  │  14. System prompt assembled: persona + RAG + weather + language rules  │
+  │  15. Conversation history appended (last 10 exchanges)                  │
+  │  16. ollama.chat(model="llama3", messages=[sys+history], options)       │
+  │  17. Response text extracted and stored in conversation_history         │
+  └─────────────────────────────────────────────────────────────────────────┘
+  ┌─ TEXT-TO-SPEECH ─────────────────────────────────────────────────────────┐
+  │  18. Markdown stripped from LLM output                                  │
+  │  19. gTTS synthesizes MP3 in farmer's language                          │
+  │  20. Saved to Static/response.mp3                                       │
+  └─────────────────────────────────────────────────────────────────────────┘
+  ┌─ FARMER HEARS RESPONSE ──────────────────────────────────────────────────┐
+  │  21. /ask returns JSON with answer, audio_url, language, weather        │
+  │  22. Browser renders text card + weather panel                          │
+  │  23. <audio> element plays /static/response.mp3 automatically          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+Total round-trip time (typical):
+  - STT (Google API)   : ~1–2 seconds
+  - RAG retrieval      : <50 milliseconds (BM25 in-memory)
+  - Weather API        : ~0.5–1 second (or cache hit → <1ms)
+  - LLM inference      : ~5–30 seconds (CPU-only Llama 3, varies by length)
+  - TTS synthesis      : ~1–2 seconds
+  ─────────────────────────────────────────────────────────────────────────
+  Total:               ~8–35 seconds per conversation turn
+
+================================================================================
+                          END OF PIPELINE DOCUMENTATION
+================================================================================

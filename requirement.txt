@@ -1,0 +1,8 @@
+flask
+ollama
+gTTS
+SpeechRecognition
+pydub
+requests
+rank-bm25
+pyngrok

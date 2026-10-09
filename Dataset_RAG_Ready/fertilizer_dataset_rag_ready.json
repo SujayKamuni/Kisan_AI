@@ -1,0 +1,893 @@
+[
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 37, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 12, phosphorus 36, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Black soil with nitrogen level 7, phosphorus 30, and potassium 9, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Black",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 22, phosphorus 20, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 35, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 12, phosphorus 13, and potassium 10, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Red soil with nitrogen level 9, phosphorus 10, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Red",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 41, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 21, phosphorus 18, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 9, phosphorus 30, and potassium 7, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 13, phosphorus 40, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 14, phosphorus 12, and potassium 15, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Loamy soil with nitrogen level 36, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Loamy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 24, phosphorus 22, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 14, phosphorus 41, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Black soil with nitrogen level 10, phosphorus 14, and potassium 13, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Black",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 38, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 21, phosphorus 19, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Black soil with nitrogen level 39, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 13, phosphorus 36, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 10, phosphorus 9, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 12, phosphorus 12, and potassium 14, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 11, phosphorus 37, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Black soil with nitrogen level 36, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 13, phosphorus 10, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 23, phosphorus 20, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Red soil with nitrogen level 9, phosphorus 29, and potassium 9, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Red",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 38, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 12, phosphorus 39, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 14, phosphorus 13, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 24, phosphorus 23, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 12, phosphorus 40, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 39, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 7, phosphorus 30, and potassium 9, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 23, phosphorus 19, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Black soil with nitrogen level 41, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Loamy soil with nitrogen level 8, phosphorus 31, and potassium 10, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Loamy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 12, phosphorus 41, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 15, phosphorus 11, and potassium 14, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 15, phosphorus 37, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 13, phosphorus 13, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 10, phosphorus 32, and potassium 7, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 22, phosphorus 24, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Black soil with nitrogen level 35, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 10, phosphorus 35, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 8, phosphorus 28, and potassium 8, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 12, phosphorus 8, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 24, phosphorus 18, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 41, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 5, phosphorus 29, and potassium 9, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 23, phosphorus 21, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 13, phosphorus 14, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 40, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 12, phosphorus 42, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Red soil with nitrogen level 11, phosphorus 15, and potassium 12, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Red",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Black soil with nitrogen level 23, phosphorus 24, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Black",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 38, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 8, phosphorus 15, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 11, phosphorus 15, and potassium 13, the recommended fertilizer is 17-17-17.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "17-17-17"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 15, phosphorus 37, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 36, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 13, phosphorus 9, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Black soil with nitrogen level 24, phosphorus 20, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Black",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 5, phosphorus 15, and potassium 18, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 37, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Red soil with nitrogen level 15, phosphorus 40, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Black soil with nitrogen level 9, phosphorus 13, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Black",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 8, phosphorus 33, and potassium 8, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 6, phosphorus 16, and potassium 19, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 10, phosphorus 14, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 21, phosphorus 23, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 39, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 23, phosphorus 19, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 42, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 13, phosphorus 39, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 9, phosphorus 22, and potassium 10, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 22, phosphorus 21, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 10, phosphorus 15, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 7, phosphorus 20, and potassium 16, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Red soil with nitrogen level 14, phosphorus 38, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Red",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 10, phosphorus 29, and potassium 8, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 41, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Black soil with nitrogen level 14, phosphorus 35, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Black",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Loamy soil with nitrogen level 11, phosphorus 9, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Loamy",
+      "fertilizer": "20-20"
+    }
+  },
+  {
+    "text": "For Barley crops grown in Sandy soil with nitrogen level 21, phosphorus 28, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Barley",
+      "soil": "Sandy",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 8, phosphorus 31, and potassium 7, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 13, phosphorus 16, and potassium 17, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Black soil with nitrogen level 35, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Black",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 12, phosphorus 19, and potassium 18, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Cotton crops grown in Loamy soil with nitrogen level 11, phosphorus 38, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Cotton",
+      "soil": "Loamy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Oil seeds crops grown in Black soil with nitrogen level 8, phosphorus 30, and potassium 9, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Oil seeds",
+      "soil": "Black",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Paddy crops grown in Clayey soil with nitrogen level 6, phosphorus 21, and potassium 19, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Paddy",
+      "soil": "Clayey",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Ground Nuts crops grown in Red soil with nitrogen level 41, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Ground Nuts",
+      "soil": "Red",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Maize crops grown in Sandy soil with nitrogen level 9, phosphorus 30, and potassium 10, the recommended fertilizer is 14-35-14.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Maize",
+      "soil": "Sandy",
+      "fertilizer": "14-35-14"
+    }
+  },
+  {
+    "text": "For Pulses crops grown in Clayey soil with nitrogen level 24, phosphorus 19, and potassium 0, the recommended fertilizer is 28-28.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Pulses",
+      "soil": "Clayey",
+      "fertilizer": "28-28"
+    }
+  },
+  {
+    "text": "For Tobacco crops grown in Red soil with nitrogen level 4, phosphorus 17, and potassium 17, the recommended fertilizer is 10-26-26.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Tobacco",
+      "soil": "Red",
+      "fertilizer": "10-26-26"
+    }
+  },
+  {
+    "text": "For Wheat crops grown in Loamy soil with nitrogen level 39, phosphorus 0, and potassium 0, the recommended fertilizer is Urea.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Wheat",
+      "soil": "Loamy",
+      "fertilizer": "Urea"
+    }
+  },
+  {
+    "text": "For Millets crops grown in Sandy soil with nitrogen level 15, phosphorus 41, and potassium 0, the recommended fertilizer is DAP.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Millets",
+      "soil": "Sandy",
+      "fertilizer": "DAP"
+    }
+  },
+  {
+    "text": "For Sugarcane crops grown in Black soil with nitrogen level 12, phosphorus 10, and potassium 0, the recommended fertilizer is 20-20.",
+    "metadata": {
+      "type": "fertilizer",
+      "crop": "Sugarcane",
+      "soil": "Black",
+      "fertilizer": "20-20"
+    }
+  }
+]
